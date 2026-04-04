@@ -169,9 +169,6 @@ if mdo_theme == 'RTD':
     # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
     on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-    def setup(app):
-        app.add_css_file('css/content_width.css')
-
     if on_rtd:
         html_context = {
             'css_files': [
@@ -182,6 +179,9 @@ if mdo_theme == 'RTD':
 
 else:
     raise ValueError(f"Unknown theme: {mdo_theme}")
+
+def setup(app):
+    app.add_css_file('css/content_width.css')
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".

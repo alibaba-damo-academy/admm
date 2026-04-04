@@ -23,6 +23,11 @@ sphinx:
   configuration: docs/conf.py
   fail_on_warning: false
 
+# Enable PDF and ePub formats
+formats:
+  - pdf
+  - epub
+
 # Optional but recommended: declare the Python requirements required
 # to build your documentation
 python:
