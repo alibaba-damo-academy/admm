@@ -1,0 +1,35 @@
+# .readthedocs.yaml
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Required: Configuration file version
+version: 2
+
+# Set the OS, Python version, and other tools you might need
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.10"
+  jobs:
+    post_create_environment:
+      # Install dependencies needed for building the package
+      - pip install cython>=0.29.0 setuptools>=61 stubgen-pyx wheel
+    post_install:
+      # Install the package in editable mode after RTD installs requirements
+      - pip install -e .
+
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: false
+
+# Optionally build your docs in additional formats such as PDF and ePub
+formats:
+  - pdf
+  - epub
+
+# Optional but recommended: declare the Python requirements required
+# to build your documentation
+python:
+  install:
+    - requirements: requirements.txt
