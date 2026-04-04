@@ -782,6 +782,20 @@ class Language:
             def directive(name):
                 return LangObj
 
+            def merge_domaindata(self, docnames, otherdata):
+                """Merge domain data from parallel builds.
+
+                This method is required for Sphinx parallel builds.
+                It merges the domain data (types, functions, props) from
+                different parallel build processes.
+                """
+                for key in ['types', 'functions', 'props']:
+                    # Merge the lists, avoiding duplicates
+                    existing_names = {item[0] for item in self.data[key]}
+                    for item in otherdata[key]:
+                        if item[0] not in existing_names:
+                            self.data[key].append(item)
+
         app.add_domain(LangDomain)
 
 
