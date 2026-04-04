@@ -169,14 +169,6 @@ if mdo_theme == 'RTD':
     # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
     on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-    if on_rtd:
-        html_context = {
-            'css_files': [
-                'https://media.readthedocs.org/css/sphinx_rtd_theme.css',
-                'https://media.readthedocs.org/css/readthedocs-doc-embed.css',
-            ],
-        }
-
 else:
     raise ValueError(f"Unknown theme: {mdo_theme}")
 
