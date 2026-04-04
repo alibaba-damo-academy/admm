@@ -1,0 +1,13 @@
+include LICENSE
+include README.md
+include CHANGELOG.md
+include CONTRIBUTING.md
+include pyproject.toml
+include src/admm/*.so
+include src/admm/*.dylib
+include src/admm/*.dll
+include src/admm/__init__.py
+recursive-include src/admm *.pyx *.pxi *.pxd *.h
+recursive-include udf *.py
+recursive-include tests *.py
+recursive-include docs *.py *.data

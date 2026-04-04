@@ -1,0 +1,79 @@
+/* Limit content width for better readability */
+.wy-nav-content {
+    max-width: 810px !important;
+}
+
+/* Code block background - gray instead of default yellow-green */
+.highlight {
+    background-color: #f5f5f5 !important;
+}
+
+.highlight pre {
+    background-color: #f5f5f5 !important;
+}
+
+/* Inline code background */
+code {
+    background-color: #f0f0f0 !important;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Keep plain inline literals neutral instead of the RTD theme's default red. */
+.rst-content code.literal,
+.rst-content tt.literal {
+    color: #000000 !important;
+}
+
+/* Make cross-reference links look like normal links, not bold dark code. */
+.rst-content code.xref,
+.rst-content tt.xref,
+.rst-content a code,
+.rst-content a tt,
+.rst-content a code span.pre,
+.rst-content a tt span.pre,
+.wy-menu-vertical a code,
+.wy-menu-vertical a tt,
+.wy-menu-vertical a code span.pre,
+.wy-menu-vertical a tt span.pre {
+    color: #9b59b6 !important;
+    font-weight: 400 !important;
+}
+
+/* Keep Python API signature headers visually consistent. */
+.rst-content dt.sig.sig-object.py .sig-name,
+.rst-content dt.sig.sig-object.py .descname,
+.rst-content dt.sig.sig-object.py .descclassname,
+.rst-content dt.sig.sig-object.py .sig-paren,
+.rst-content dt.sig.sig-object.py .sig-param,
+.rst-content dt.sig.sig-object.py .headerlink,
+.rst-content dt.sig.sig-object.py .n,
+.rst-content dt.sig.sig-object.py .o,
+.rst-content dt.sig.sig-object.py .p,
+.rst-content dt.sig.sig-object.py .w,
+.rst-content dt.sig.sig-object.py a,
+.rst-content dt.sig.sig-object.py a span.pre,
+.rst-content dt.sig.sig-object.py span.pre {
+    color: inherit !important;
+}
+
+/* Literal block (code-block directive) */
+.literal-block-wrapper .highlight {
+    background-color: #f5f5f5 !important;
+}
+
+/* Keep the User Guide landing-page navigation labels prominent without duplicating headings. */
+.rst-content .user-guide-nav-heading.rubric {
+    margin: 1.4em 0 0.6em;
+    font-size: 150%;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* Promote landing-page rubrics to the same larger heading size used by TOC captions. */
+.rst-content .landing-page-section-heading.rubric {
+    margin: 1.4em 0 0.6em;
+    font-size: 150%;
+    font-weight: 700;
+    line-height: 1.4;
+}

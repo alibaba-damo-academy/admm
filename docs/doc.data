@@ -1,0 +1,1706 @@
+
+<
+<
+py.ADMMError
+<! type class
+<! brief
+<This exception can be caught for most routines. It has 2 properties (errno and message) to indicate which error occurred.
+<
+<
+py.ADMMError.errno
+<! type int
+<! brief
+<The error number for error just occurred. 
+<
+<
+py.ADMMError.message
+<! type str
+<! brief
+<The text message to explain what error just occurred.
+<
+<
+py.ArrayLike
+<! type class
+<! brief
+<
+<ArrayLike is a pseudo type. It is used to generalize all constant types.
+<
+<More detailed, an ArrayLike may refer to:
+<
+<  #. A `Constant` object. 
+<  #. A `numpy.ndarray` dense array.
+<  #. A `scipy.sparse.spmatrix` sparse matrix.
+<  #. A numeric value (except complex), or
+<  #. Any acceptable input argument for `numpy.array()`.
+<
+<For example:
+<
+<```py
+<
+<listobj = [[0, 1], [2, 3]]
+<tupleobj = tuple(listobj)
+<
+<constant = Constant(listobj)
+<numeric = 1
+<
+<nparrobj = numpy.array(listobj)
+<spmatobj = scipy.sparse.coo_matrix(nparrobj)
+<
+<# list
+<print(huber(listobj))
+<# tuple
+<print(huber(tupleobj))
+<# Constant
+<print(huber(constant))
+<# numeric value
+<print(huber(numeric))
+<
+<# numpy.ndarray
+<print(huber(nparrobj))
+<
+<# scipy.sparse.spmatrix
+<print(huber(spmatobj))
+<
+<
+<```
+<
+<
+py.Constant
+<! type class
+<! base TensorLike
+<! brief
+<This class represents a tensor constant.
+<
+<The tensor may be dense or sparse, it is n-dimensional.
+<
+<For example:
+<
+<```py
+<listdata = [[0, 1], [2, 3]]
+<ndarray = numpy.array(listdata)
+<coo_mat = scipy.sparse.coo_matrix(ndarray)
+<
+<# From scalar
+<scalar = Constant(0)
+<# From iterable
+<dense1 = Constant(listdata)
+<# From numpy ndarray
+<dense2 = Constant(ndarray)
+<# From shape, coordinates, values
+<sparse1 = Constant((2, 2), [(0, 0), (1, 1)], [1, 1])
+<# From shape, flat indices, values
+<sparse2 = Constant((2, 2), [0, 3], [1, 1])
+<# From scipy sparse matrix
+<sparse3 = Constant(coo_mat)
+<```
+<
+<
+<Usually, users do not need to use this class, a list of number, a numpy ndarray, even a scipy sparse matrix may be preferred.
+<
+<A scenario for this class is, a sparse tensor with more than 2 dimensions can be and only can be created by using this class.
+<
+<For example:
+<
+<```py
+<>>> A = [[1, 2], [3, 4]]
+<>>> X = Var(2, 2)
+<
+<>>> A @ X
+<Expr((2, 2), MATMUL('ndarray', 'Var'))
+<>>> numpy.array(A) @ X
+<Expr((2, 2), MATMUL('ndarray', 'Var'))
+<>>> Constant(A) @ X
+<Expr((2, 2), MATMUL('Constant', 'Var'))
+<>>> scipy.sparse.coo_matrix(A) @ X
+<Expr((2, 2), MATMUL('coo_matrix', 'Var'))
+<>>> # When A is a sparse cube
+<>>> Constant((2, 2, 2), range(8), range(8)) @ X
+<Expr((2, 2, 2), MATMUL('Constant', 'Var'))
+<```
+<
+<This class is numpy compatible:
+<
+<```py
+<>>> c = Constant([[1, 2], [3, 4]])
+<>>> numpy.abs(norm(c, ord=2) - numpy.linalg.norm(c, ord=2)) < 1e-9
+<True
+<```
+<
+<
+py.Constant.T
+<! type Constant
+<! brief
+<Transpose of the constant.
+<
+<
+py.Constant.__add__
+<! type method
+<! sortname z03
+<! brief
+<Constant + object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of add operation.
+<
+<
+py.Constant.__getitem__
+<! type method
+<! sortname z01
+<! brief
+<Get sub-tensor from this constant.
+<! arg slc: slice
+<The index range for each dimension for sub-tensor.
+<! return Constant
+<The sub-tensor.
+<
+<
+py.Constant.__init__
+<! type method
+<! brief
+<Construct a constant.
+<! arg arr: Union[Constant, ArrayLike]
+<The value for this constant.
+<
+<Can be another constant, a scipy sparse matrix, an array-like object like a list, or a numpy ndarray.
+<! arg ind: Optional[ArrayLike] = None
+<If ind is not None, it should be an array-like object to provide indices for sparse tensor. In this case arr should be a shape.
+<! arg val: Optional[ArrayLike] = None
+<If val is not None, it should be an array-like object to provide values for sparse tensor. In this case arr should be a shape.
+<
+<
+py.Constant.__matmul__
+<! type method
+<! sortname z09
+<! brief
+<Constant @ object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of multiplication operation.
+<! note
+<This operation is matrix multiplication. 
+<
+<
+py.Constant.__mul__
+<! type method
+<! sortname z07
+<! brief
+<Constant * object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of multiplication.
+<! note
+<This operation is element-wise multiplication.
+<
+<
+py.Constant.__neg__
+<! type method
+<! sortname z02
+<! brief
+<Returns -constant.
+<! return Constant
+<-constant.
+<
+<
+py.Constant.__pow__
+<! type method
+<! sortname z13
+<! brief
+<Constant ** object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of exponentiation.
+<! note
+<This operation is element-wise exponentiation.
+<
+<
+py.Constant.__radd__
+<! type method
+<! sortname z04
+<! brief
+<object + constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of add operation.
+<
+<
+py.Constant.__rmatmul__
+<! type method
+<! sortname z10
+<! brief
+<object @ constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of multiplication.
+<! note
+<This operation is matrix multiplication.
+<
+<
+py.Constant.__rmul__
+<! type method
+<! sortname z08
+<! brief
+<object * constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of multiplication.
+<! note
+<This operation is element-wise multiplication.
+<
+<
+py.Constant.__rpow__
+<! type method
+<! sortname z14
+<! brief
+<object ** constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of exponentiation.
+<! note
+<This operation is element-wise exponentiation.
+<
+<
+py.Constant.__rsub__
+<! type method
+<! sortname z06
+<! brief
+<object - constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of subtraction.
+<
+<
+py.Constant.__rtruediv__
+<! type method
+<! sortname z12
+<! brief
+<object / constant.
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Union[Constant, Expr]
+<The result of division.
+<! note
+<This operation is element-wise division.
+<
+<
+py.Constant.__sub__
+<! type method
+<! sortname z05
+<! brief
+<Constant - object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of subtraction.
+<
+<
+py.Constant.__truediv__
+<! type method
+<! sortname z11
+<! brief
+<Constant / object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Union[Constant, Expr]
+<The result of division.
+<! note
+<This operation is element-wise division.
+<
+<
+py.Constant.asDense
+<! type method
+<! brief
+<If constant is sparse, make a dense copy for it.
+<! return Constant
+<The dense copy for sparse constant. No copy will be made if constant is dense.
+<
+<
+py.Constant.asScalar
+<! type method
+<! brief
+<Convert this tensor to a scalar value.
+<! return float
+<The value of only element contained by tensor. if tensor has more elements, this method raise exception.
+<
+<
+py.Constant.asSparse
+<! type method
+<! brief
+<If constant is dense, make a sparse copy for it.
+<! return Constant
+<The sparse copy for dense constant. No copy will be made if constant is sparse.
+<
+<
+py.Constant.data
+<! type Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]
+<! brief
+<The content of this constant.
+<
+<It is a numpy ndarray for dense. In case of sparse, this is a tuple contains 2 ndarray, the indices and values.
+<
+<
+py.Constant.dispose
+<! type method
+<! brief
+<Instantly free memory for constant object, or constant may be freed automatically by garbage collector.
+<
+<
+py.Constant.hasAttr
+<! type method
+<! brief
+<Check if constant has a specified attribute.
+<
+<! arg **kwargs: bool
+<The attribute to check.
+<Attributes include:
+<  * nonneg
+<  * nonpos
+<  * symmetric
+<  * diag
+<  * PSD
+<  * NSD
+<  * pos
+<  * neg
+<
+<Value of this argument should be True. A False-valued argument will be ignored.
+<
+<! return bool
+<True if constant has specified attribute.
+<
+<! example
+<```py
+<c = Constant([[1, 0], [0, 1]])
+<c.hasAttr(symmetric=True)
+<# Expression is True
+<c.hasAttr(neg=True)
+<# Expression is False
+<```
+<
+<
+py.Constant.isDense
+<! type method
+<! brief
+<Check if this constant is a dense tensor.
+<! return bool
+<True if constant is dense, False otherwise
+<
+<
+py.Constant.isSparse
+<! type method
+<! brief
+<Check if this constant is a sparse tensor.
+<! return bool
+<True if constant is sparse, False otherwise
+<
+<
+py.Constant.reshape
+<! type method
+<! brief
+<Reshape this constant, number of elements should not be changed between new shape and original shape.
+<! arg *shape: int
+<The dimensions for new shape.
+<! return Constant
+<The reshaped constant.
+<
+<
+py.Constr
+<! type class
+<! brief
+<This class represents a constraint.
+<
+<It is usually generated by comparison between expressions.
+<
+<
+py.Constr.index
+<! type int
+<! brief
+<This index of this constraint.
+<
+<
+py.Constr.lhs
+<! type Union[TensorLike, ArrayLike]
+<! brief
+<The left-hand-side value for this constraint.
+<
+<
+py.Constr.rhs
+<! type Union[TensorLike, ArrayLike]
+<! brief
+<The right-hand-side value for this constraint.
+<
+<
+py.Constr.sense
+<! type str
+<! brief
+<The comparator for this constraint.
+<
+<
+py.Expr
+<! type class
+<! base TensorLike
+<! brief
+<The expression.
+<
+<
+py.Expr.arg
+<! type method
+<! brief
+<Retrieve the nth operand.
+<! arg n: int
+<The ordinal for operand to be retrieved.
+<! return Union[TensorLike, ArrayLike]
+<The nth operand.
+<
+<
+py.Expr.args
+<! type List[Union[TensorLike, ArrayLike]]
+<! brief
+<List of operands in expression.
+<
+<
+py.Expr.nargs
+<! type int
+<! brief
+<The number of operands this expression has.
+<
+<
+py.Expr.operator
+<! type int
+<! brief
+<The operator id for this expression.
+<
+<
+py.Model
+<! type class
+<! brief
+<The optimization model.
+<
+<
+py.Model.DualGap
+<! type float
+<! brief
+<The gap for dual problem.
+<
+<
+py.Model.DualObjVal
+<! type float
+<! brief
+<The objective value for dual problem.
+<
+<
+py.Model.MinSense
+<! type bool
+<! brief
+<Check if this model is to be minimized.
+<
+<
+py.Model.ModelSense
+<! type int
+<! brief
+<Model sense (minimization(1) or maximization(-1)).
+<
+<
+py.Model.Name
+<! type str
+<! brief
+<The name of this model.
+<
+<
+py.Model.NumConstrs
+<! type int
+<! brief
+<The number of constraints this model has.
+<
+<
+py.Model.NumIters
+<! type int
+<! brief
+<The number of optimization iterations.
+<
+<
+py.Model.ObjVal
+<! type float
+<! brief
+<The objective value for primal problem.
+<
+<
+py.Model.PrimalGap
+<! type float
+<! brief
+<The gap for primal problem.
+<
+<
+py.Model.PrimalObjVal
+<! type float
+<! brief
+<The objective value for primal problem.
+<
+<
+py.Model.SolverTime
+<! type float
+<! brief
+<The optimization time.
+<
+<
+py.Model.Status
+<! type int
+<! brief
+<The optimization status.
+<  * SOLVE_UNKNOWN = 0
+<  * SOLVE_OPT_SUCCESS = 1
+<  * SOLVE_INFEASIBLE = 2
+<  * SOLVE_UNBOUNDED = 3
+<  * SOLVE_OVER_MAX_ITER = 4
+<  * SOLVE_OVER_MAX_TIME = 5
+<  * SOLVE_NAN_FOUND = 6
+<  * SOLVE_PRE_FAILURE = 7
+<  * SOLVE_EXCEPT_ERROR = 8
+<  * SOLVE_GET_SOL_FAILURE = 9
+<  * SOLVE_ERROR = 10
+<
+<
+py.Model.StatusString
+<! type str
+<! brief
+<The optimization status string message.
+<
+<
+py.Model.__init__
+<! type method
+<! brief
+<Construct a model.
+<! arg obj: Optional[Model]=None
+<The model to copy. When both `obj` and `file` have assigned values, `obj` is used and `file` is ignored.
+<! arg file: Optional[str]=None
+<The file to read model from. The compression type is encoded in the file name as a suffix (.gz, .bz2), for instance "model.input.gz" implies a gzip compression type.
+<
+<
+<! arg logfile: Optional[str]=None
+<The file to write log to.
+<
+<
+py.Model.addConstr
+<! type method
+<! sortname constrA
+<! brief
+<Add a new constraint to this model.
+<! arg lexpr: Union[TensorLike, ArrayLike, Constr]
+<The left-side-hand value for new constraint. If it is a Constr, the rest arguments will be ignored.
+<! arg sense: Optional[str] = None
+<The comparator for new constraint.
+<
+<It is:
+<  * '<' for less than or equal to.
+<  * '>' for greater than or equal to.
+<  * '=' for equal to.
+<  * 'N' for NSD.
+<  * 'P' for PSD
+<
+<! arg rexpr: Union[TensorLike, ArrayLike, Constr] = None
+<
+<The right-side-hand value for new constraint.
+<
+<! return Constr
+<The newly added constraint.
+<
+<
+py.Model.dispose
+<! type method
+<! sortname zzzz
+<! brief
+<Instantly free memory for model object, or model may be freed automatically by garbage collector.
+<
+<
+py.Model.getConstr
+<! type method
+<! sortname constrG
+<! brief
+<Get constraint object by its index.
+<! arg index: int
+<Constraint index.
+<! return Constr
+<The indexed constraint.
+<
+<
+py.Model.getObjective
+<! type method
+<! sortname objectiveG
+<! brief
+<Get the objective function as an expression.
+<! return Expr
+<The objective function.
+<! note
+<If model has no objective function, this method raise an error.
+<
+<
+py.Model.getOption
+<! type method
+<! sortname optionG
+<! brief
+<Get value for an option.
+<! arg name: str
+<The option name.
+<! return Union[int, float]
+<The current option value.
+<! note
+<User may use `Options.XXX` to specify option name.
+<
+<
+py.Model.getOptionInfo
+<! type method
+<! sortname optionGi
+<! brief
+<Get the metadata for an option.
+<! arg name: str
+<The option name.
+<! return Tuple[str, Union[int, float], Union[int, float], Union[int, float]]
+<A tuple with 4 elements will be returned: the canonical option name, the minimal value allowed (inclusive), the maximal value allowed(inclusive), and the default value
+<! note
+<User may use `Options.XXX` to specify option name.
+<
+<
+py.Model.getParam
+<! type method
+<! sortname paramG
+<! brief
+<Retrieve the parameter in this model.
+<! arg name: str
+<The parameter name.
+<! return Param
+<The parameter to be retrieved.
+<
+<
+py.Model.getVar
+<! type method
+<! brief
+<Get variable object by its index.
+<! arg index: int
+<Variable index.
+<! return Var
+<The indexed variable.
+<
+<
+py.Model.getVarByName
+<! type method
+<! brief
+<Get variable by its name.
+<! arg name: str
+<Variable name.
+<! return Var
+<The variable, or `None` if no such variable exist.
+<
+<
+py.Model.optimize
+<! type method
+<! brief
+<Optimize this model.
+<! arg paramdict: Optional[Dict[str, ArrayLike]] = {}
+<The constant value to be bounded to parameter.
+<! arg tuner: Optional[Callable[[TuningContext], None]] = None
+<The customized hyper parameter tuning function.
+<
+<! example
+<```py
+<def hptune(ctx: TuningContext):
+<    print(ctx)
+<
+<p = Param("param1", 2, 2)
+<x = Var(2, 2)
+<
+<model.setObjective(sum(p @ x))
+<model.optimize({"param1": [[1, 2], [3, 4]]}, hptune)
+<```
+<
+<
+py.Model.removeConstr
+<! type method
+<! sortname constrR
+<! brief
+<Remove constraint(s) from model.
+<! arg constrs: Union[Constr, Iterable[Constr]]
+<The constraints to be removed.
+<
+<
+py.Model.setObjective
+<! type method
+<! sortname objectiveS
+<! brief
+<Set objective function for this model.
+<
+<Note that only scalar or expression with 1 element can be set as objective function.
+<
+<! arg expr: Union[TensorLike, ArrayLike]
+<The objective function. Pass a `None` to clear objective function.
+<! arg modelsense: int=0
+<Optimization sense, MINIMIZE(1) or MAXIMIZE(-1).
+<
+<
+py.Model.setOption
+<! type method
+<! sortname optionS
+<! brief
+<Set a new value for an option.
+<! arg name: str
+<The option name.
+<! arg value: Union[int, float]
+<The new option value.
+<
+<
+<! note
+<User may use `Options.XXX` to specify option name.
+<
+<
+py.Model.write
+<! type method
+<! brief
+<Write this model to a file. 
+<! arg fname: str
+<The output file name. The compression type is encoded in the file name as a suffix (.gz, .bz2), for instance "model.output.gz" implies a gzip compression type.
+<! note
+<A model with user defined function (aka. UDF) can not be serialized to file.
+<
+<
+py.OptionConstClass
+<! type class
+<! brief
+<A namespace to hold option names. It has a builtin instance `admm.Options`.
+<
+<For example:
+<
+<```python
+<# Set the maximum number of iterations as 1000 for solving the original problem
+<model.setOption(admm.Options.admm_max_iteration, 1000)
+<```
+<
+<
+py.Param
+<! type class
+<! base TensorLike
+<! brief
+<Parameter is a place-holder for constant at modeling phase. Parameter has a shape but its data is undetermined at modeling phase.
+<
+<
+py.Param.__init__
+<! type method
+<! brief
+<Construct a new parameter.
+<! arg name: str
+<The name for new parameter.
+<! arg *shape: int
+<The parameter shape.
+<! arg **attr: bool
+<The attribute parameter has.
+<Attributes include:
+<  * nonneg
+<  * nonpos
+<  * symmetric
+<  * diag
+<  * PSD
+<  * NSD
+<  * pos
+<  * neg
+<! exmaple
+<p = Param("p0", 2, 3, nonneg=True)
+<
+<
+py.Param.attr
+<! type int
+<! brief
+<The declared attribute for parameter.
+<
+<Attributes include:
+<  * nonneg = 0
+<  * nonpos = 1
+<  * symmetric = 2
+<  * diag = 3
+<  * PSD = 4
+<  * NSD = 5
+<  * pos = 6
+<  * neg = 7
+<
+<For example, if parameter is declared as PSD, this value is 16(1 << 4).
+<
+<
+py.Param.name
+<! type str
+<! brief
+<The name of this parameter
+<
+<
+py.TensorLike
+<! type class
+<! brief
+<The base class for `Constant`, `Var`, `Param` and `Expr`.
+<
+<
+py.TensorLike.T
+<! type Expr
+<! brief
+<Transpose of the tensor.
+<
+<
+py.TensorLike.__add__
+<! type method
+<! sortname 2
+<! brief
+<Tensor + object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of add operation.
+<
+<
+py.TensorLike.__eq__
+<! type method
+<! sortname 012
+<! brief
+<Tensor == object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side for comparison.
+<! return Constr
+<The constraint.
+<
+<
+py.TensorLike.__ge__
+<! type method
+<! sortname 011
+<! brief
+<Tensor >= object.
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side for comparison.
+<! return Constr
+<The constraint.
+<
+<
+py.TensorLike.__getitem__
+<! type method
+<! sortname 000
+<! brief
+<Get sub-tensor from this tensor.
+<! arg slc: slice
+<The index range for each dimension for sub-tensor.
+<! return Expr
+<The sub-tensor.
+<
+<
+py.TensorLike.__le__
+<! type method
+<! sortname 010
+<! brief
+<Tensor <= object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side for comparison.
+<! return Constr
+<The constraint.
+<
+<
+py.TensorLike.__lshift__
+<! type method
+<! sortname 013
+<! brief
+<Constraint: tensor is NSD.
+<! arg r: int
+<Must be zero.
+<! return Constr
+<The NSD constraint.
+<
+<
+py.TensorLike.__matmul__
+<! type method
+<! sortname 8
+<! brief
+<Tensor @ object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of multiplication operation.
+<! note
+<This operation is matrix multiplication. 
+<
+<
+py.TensorLike.__mul__
+<! type method
+<! sortname 6
+<! brief
+<Tensor * object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of multiplication.
+<! note
+<This operation is element-wise multiplication.
+<
+<
+py.TensorLike.__neg__
+<! type method
+<! sortname 1
+<! brief
+<Returns -tensor.
+<! return Expr
+<-tensor.
+<
+<
+py.TensorLike.__pow__
+<! type method
+<! sortname 10
+<! brief
+<Tensor ** object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of exponentiation.
+<! note
+<This operation is element-wise exponentiation.
+<
+<
+py.TensorLike.__radd__
+<! type method
+<! sortname 3
+<! brief
+<Object + tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of add operation.
+<
+<
+py.TensorLike.__rlshift__
+<! type method
+<! sortname 014
+<! brief
+<Constraint: tensor is PSD.
+<! arg l: int
+<Must be zero.
+<! return Constr
+<The PSD constraint.
+<
+<
+py.TensorLike.__rmatmul__
+<! type method
+<! sortname 9
+<! brief
+<Object @ tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of multiplication.
+<! note
+<This operation is matrix multiplication.
+<
+<
+py.TensorLike.__rmul__
+<! type method
+<! sortname 7
+<! brief
+<Object * tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of multiplication.
+<! note
+<This operation is element-wise multiplication.
+<
+<
+py.TensorLike.__rpow__
+<! type method
+<! sortname 11
+<! brief
+<Object ** tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of exponentiation.
+<! note
+<This operation is element-wise exponentiation.
+<
+<
+py.TensorLike.__rrshift__
+<! type method
+<! sortname 017
+<! brief
+<Constraint: tensor is NSD.
+<! arg l: int
+<Must be zero.
+<! return Constr
+<The NSD constraint.
+<
+<
+py.TensorLike.__rshift__
+<! type method
+<! sortname 016
+<! brief
+<Constraint: tensor is PSD.
+<! arg r: int
+<Must be zero.
+<! return Constr
+<The PSD constraint.
+<
+<
+py.TensorLike.__rsub__
+<! type method
+<! sortname 5
+<! brief
+<Object - tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of subtraction.
+<
+<
+py.TensorLike.__rtruediv__
+<! type method
+<! sortname 92
+<! brief
+<Object / tensor.
+<
+<Operands may be broadcasted.
+<! arg l: Union[TensorLike, ArrayLike]
+<The left-hand-side object.
+<! return Expr
+<The result of division.
+<! note
+<This operation is element-wise division.
+<
+<
+py.TensorLike.__sub__
+<! type method
+<! sortname 4
+<! brief
+<Tensor - object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of subtraction.
+<
+<
+py.TensorLike.__truediv__
+<! type method
+<! sortname 91
+<! brief
+<Tensor / object.
+<
+<Operands may be broadcasted.
+<! arg r: Union[TensorLike, ArrayLike]
+<The right-hand-side object 
+<! return Expr
+<The result of division.
+<! note
+<This operation is element-wise division.
+<
+<
+py.TensorLike.index
+<! type int
+<! brief
+<Index of this tensor. It is -1 until tensor is added to model.
+<
+<
+py.TensorLike.ndim
+<! type int
+<! brief
+<The number of dimensions for this tensor.
+<
+<
+py.TensorLike.reshape
+<! type method
+<! sortname 0
+<! brief
+<Reshape this tensor, number of elements should not be changed between new shape and original shape.
+<! arg *shape: int
+<The dimensions for new shape.
+<! return Expr
+<The reshaped tensor.
+<
+<
+py.TensorLike.shape
+<! type Tuple[int]
+<! brief
+<The shape of this tensor.
+<
+<
+py.TensorLike.type
+<! type int
+<! brief
+<The type for this tensor. 
+<
+<It is: 
+<  * 2 for sparse constant.
+<  * 3 for dense constant.
+<  * 4 for parameter.
+<  * 5 for variable.
+<  * and 6, for expression.
+<
+<
+py.TuningContext
+<! type class
+<! brief
+<The hyper parameter accessor.
+<
+<If user defined its hyper parameter tuner, use this class to retrieve information and set new value for hyper parameters.
+<
+<
+py.UDFBase
+<! type class
+<! brief
+<The base class for user to define function.
+<
+<
+py.UDFBase.argmin
+<! type method
+<! brief
+<Method to minimize function value.
+<
+<The implementation must solve: argmin_x f(x) + (lamb/2)||x - v||^2, where v is the current iterate passed via tensorlist.
+<
+<For indicator functions, the argmin reduces to projection onto the feasible set.
+<
+<! arg lamb: float
+<The penalty weight (rho) provided by the ADMM iteration. The argmin method must solve: argmin_x f(x) + (lamb/2)||x - v||^2.
+<
+<! arg tensorlist: list
+<List of `numpy.ndarray`, the current iterate values for each associated variable.
+<
+<! return list
+<The variable value list that minimizes the proximal subproblem, or `None` to stop the optimization.
+<
+<
+py.UDFBase.arguments
+<! type method
+<! sortname A
+<! brief
+<Method to get function argument list. Each argument should be a Var or a non-const expression.
+<! return list
+<A list of Var or Expr objects that this UDF operates on.
+<
+<
+py.UDFBase.eval
+<! type method
+<! sortname B
+<! brief
+<Method to evaluate this function.
+<
+<For indicator functions, return 0.0 if feasible and float("inf") otherwise.
+<! arg tensorlist: list
+<List of `numpy.ndarray`. Each one is a value for corresponding variable associated.
+<! return float
+<The function value. For indicator functions, return 0.0 if feasible and float("inf") otherwise.
+<
+<
+py.Var
+<! type class
+<! base TensorLike
+<! brief
+<The decision variable to be optimized.
+<
+<
+py.Var.X
+<! type np.ndarray
+<! brief
+<The solution of this variable.
+<
+<
+py.Var.__init__
+<! type method
+<! brief
+<Construct a new variable.
+<! arg name: str = None
+<The name for new variable.
+<! arg *shape: int
+<The variable shape.
+<! arg **attr: bool
+<The attribute variable has.
+<
+<Attributes include:
+<
+<  * nonneg
+<  * nonpos
+<  * symmetric
+<  * diag
+<  * PSD
+<  * NSD
+<  * pos
+<  * neg
+<
+<! exmaple
+<p = Var(2, 3, nonneg=True)
+<
+<
+py.Var.attr
+<! type int
+<! brief
+<The declared attribute for variable.
+<
+<Attributes include:
+<  * nonneg = 0
+<  * nonpos = 1
+<  * symmetric = 2
+<  * diag = 3
+<  * PSD = 4
+<  * NSD = 5
+<  * pos = 6
+<  * neg = 7
+<
+<For example, if variable is declared as PSD, this value is 16(1 << 4).
+<
+<
+py.Var.start
+<! type ArrayLike
+<! brief
+<
+<The value for variable to warm start. Its initial value is None, which indicates that no start value specified.
+<
+<
+py.abs
+<! type function
+<! brief
+<Get the absolute value for an expression.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! return Union[Expr, Constant]
+<The absolute value.
+<
+<
+py.conv2d
+<! type function
+<! brief
+<Perform 2d convolution. 
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression, should be a matrix.
+<! arg k: ArrayLike
+<Another matrix.
+<! arg mode: str = 'same'
+<Padding strategy:
+<
+<Assume x has shape `(m, n)`, k has `(p, q)`
+<
+<  * 'full': Fill with 0s, returns all elements. Result shape is `(m + p - 1, n + q - 1)` .
+<  * 'same': Result shape is the same size as `x`, it is the sub matrix centered with respect to the 'full' output.
+<  * 'valid': Return result containing only elements that do not rely on the padding. Result shape is `(max(m, p) - min(m, p) + 1, max(n, q) - min(n, q) + 1)` .
+<
+<! return Union[Expr, Constant]
+<The result matrix.
+<
+<! note
+<If `mode` is 'valid', shapes for `x(m, n)` and `k(p, q)` should satisfy:
+<
+<`(m - p) * (n - q) >= 0`
+<
+<That is, one matrix can be placed into another.
+<
+<
+py.corr2d
+<! type function
+<! brief
+<Compute cross-correlation. In some machine learning frameworks, convolution operator is actually cross-correlation (e.g. tensorflow.nn.conv2d).
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression, should be a matrix.
+<! arg k: ArrayLike
+<Another matrix.
+<! arg mode: str = 'same'
+<Padding strategy:
+<
+<Assume x has shape `(m, n)`, k has `(p, q)`
+<
+<  * 'full': Fill with 0s, returns all elements. Result shape is `(m + p - 1, n + q - 1)` .
+<  * 'same': Result shape is the same size as `x`, it is the sub matrix centered with respect to the 'full' output.
+<  * 'valid': Return result containing only elements that do not rely on the padding. Result shape is `(max(m, p) - min(m, p) + 1, max(n, q) - min(n, q) + 1)` .
+<
+<! return Union[Expr, Constant]
+<The result matrix.
+<
+<! note
+<If `mode` is 'valid', shapes for `x(m, n)` and `k(p, q)` should satisfy:
+<
+<`(m - p) * (n - q) >= 0`
+<
+<That is, one matrix can be placed into another.
+<
+<
+py.diag
+<! type function
+<! brief
+<For matrix, retrieve the elements in main diagonal as a vector. In this case it should be a square matrix.
+<
+<For vector, construct a diagonal matrix with this vector.
+<! arg x: Union[TensorLike, ArrayLike]
+<The vector or matrix.
+<! return Union[Expr, Constant]
+<The result matrix or vector.
+<
+<
+py.entropy
+<! type function 
+<! brief
+<Return a tensor, each element indicates the result of x * log(x).
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression which requires each element to be greater than 0.
+<! return Union[Expr, Constant]
+<The result tensor.
+<! note
+<Standard Shannon entropy: -sum(x * log(x)), that is: -sum(entropy(x))
+<
+<! example
+<
+<```py
+<>>> c = numpy.square(numpy.random.randn(10))
+<>>> scipy.stats.entropy(c) + numpy.sum(entropy(c / numpy.sum(c)))
+<0.0
+<```
+<
+<
+py.exp
+<! type function
+<! brief
+<Return e ^ x.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression for exponent.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
+py.hstack
+<! type function
+<! brief
+<Stack expressions in sequence horizontally (column wise).
+<! arg *tensors: Union[TensorLike, ArrayLike]
+<The expressions to stack.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
+py.huber
+<! type function 
+<! brief
+<Return a tensor, each element indicates the result of huber function.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to which the huber function will be applied.
+<! arg delta: ArrayLike = 1
+<The threshold of huber function.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.bathtub
+<! type function
+<! brief
+<Return a tensor, each element indicates the result of w-insensitive loss function.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to which the w-insensitive loss function will be applied.
+<! arg delta: ArrayLike = 1
+<The threshold of w-insensitive loss function.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.squared_bathtub
+<! type function
+<! brief
+<Return a tensor, each element indicates the result of squared w-insensitive loss function.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to which the squared w-insensitive loss will be applied.
+<! arg delta: ArrayLike = 1
+<The threshold of squared w-insensitive loss function.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.vapnik
+<! type function
+<! brief
+<Return Vapnik loss: max(norm(x, 2) - epsilon, 0).
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! arg epsilon: ArrayLike = 0
+<The threshold.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.inrange
+<! type function
+<! brief
+<Return a tensor, contains only `inf` and `0`, each element indicates whether an element in x is in range [lb, ub].
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to be tested.
+<! arg lb: ArrayLike
+<The lower bound constant. It can be broadcasted.
+<! arg ub: ArrayLike
+<The upper bound constant. It can be broadcasted.
+<! return Union[Expr, Constant]
+<The indicator tensor.
+<
+<
+py.kl_div
+<! type function
+<! brief
+<Return a tensor, each element indicates the result of p * log(p / q). The sum of the result represents the Kullback-Leibler (KL) divergence between p and q.
+<! arg p: Union[TensorLike, ArrayLike]
+<The expression `p` which requires each element to be greater than 0.
+<! arg q: Union[TensorLike, ArrayLike]
+<The expression `q` which requires each element to be greater than 0.
+<! return Union[Expr, Constant]
+<The result tensor.
+<! example
+<
+<```py
+<>>> p = numpy.square(numpy.random.randn(10))
+<>>> q = numpy.square(numpy.random.randn(10))
+<>>> pnorm = p / numpy.sum(p)
+<>>> qnorm = q / numpy.sum(q)
+<>>> scipy.stats.entropy(p, q) - numpy.sum(kl_div(pnorm, qnorm))
+<0.0
+<```
+<! note
+<Standard Kullback-Leibler divergence (relative entropy) is: sum(p * log(p / q)), that is: sum(kl_div(p, q))
+<
+<
+py.log
+<! type function
+<! brief
+<Return log(x).
+<! arg x: Union[TensorLike, ArrayLike]
+<The argument for log.
+<! return Union[Expr, Constant]
+<The result.
+<
+<
+py.log_det
+<! type function
+<! brief
+<Return a scalar which indicates the log-determinant result of a matrix.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression which should be a square matrix.
+<! return Union[Expr, Constant]
+<The result scalar. Returns inf if `x` is not a strictly positive definite matrix.
+<
+<
+py.logistic
+<! type function
+<! brief
+<Return a tensor, each element indicates the result of log(e ^ x + b).
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression `x` which requires each element to be greater than 0.
+<! arg b: ArrayLike = 1
+<The tensor parameter `b` in logistic function.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.max
+<! type function
+<! brief
+<Return a scalar which indicates the largest item in the tensor.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to which the maximum function will be applied.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.maximum
+<! type function
+<! brief
+<Return a new tensor, each element of new tensor is the larger of the corresponding elements in `x` and `b`.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! arg b: ArrayLike
+<The lower bound tensor constant.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
+py.scalene
+<! type function
+<! brief
+<Return a new tensor, each element of which depends on the corresponding element of x
+<  #. when x<0, element = ax
+<  #. when x=0, element = 0
+<  #. when x>0, element = bx
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! arg a: ArrayLike = -1
+<The coefficient for negative entries.
+<! arg b: ArrayLike = 1
+<The coefficient for positive entries.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
+py.min
+<! type function
+<! brief
+<Return a scalar which indicates the least item in the tensor.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression to which the minimum function will be applied.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.minimum
+<! type function
+<! brief
+<Return a new tensor, each element of new tensor is the smaller of the corresponding elements in `x` and `b`.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! arg b: ArrayLike
+<The upper bound tensor constant.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
+py.norm
+<! type function
+<! brief
+<Compute the norm for an expression or constant.
+<
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression or constant.
+<! arg ord:Union[int, str]=None
+<The norm level:
+<  * None - level 2 norm for vector and Frobenius norm for matrix.
+<  * 1 - for level 1 norm. It is, sum(abs(x)) for vector, and for matrix, max level 1 norm for all its row vectors.
+<  * 2 - for level 2 norm. It is, sqrt(sum(x^2)) for vector, and largest singular value for matrix.
+<  * inf - for inf norm. It is, max(abs(x)) for vector, and for matrix, max level 1 norm for all its column vectors.
+<  * 'fro' - for frobenius norm. It is, sqrt(sum(x^2)) for matrix.
+<  * 'nuc' - for nuclear norm. It is, sum for all singular values.
+<! return Union[Expr, Constant]
+<The scalar norm value.
+<
+<
+py.power
+<! type function
+<! brief
+<Return a tensor, each element indicates the result of an operation to raise `p` to the power separately.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression `x`. When `0 < p < 1`, every element of `x` is required to be greater than or equal to 0.
+<! arg p: ArrayLike
+<The scalar parameter `p` requires greater than 0.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.sqrt
+<! type function
+<! brief
+<Compute x ^ 1/2 elementwise.
+<! arg x: Union[TensorLike, ArrayLike]
+<The source tensor.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.square
+<! type function
+<! brief
+<Compute x ^ 2 elementwise.
+<! arg x: Union[TensorLike, ArrayLike]
+<The source tensor.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.squared_hinge
+<! type function
+<! brief
+<Compute max(1 - x, 0) ^ 2 elementwise.
+<! arg x: Union[TensorLike, ArrayLike]
+<The source tensor.
+<! return Union[Expr, Constant]
+<The result tensor.
+<
+<
+py.sum
+<! type function
+<! brief
+<Compute the summation of all elements in tensor.
+<! arg x: Union[TensorLike, ArrayLike]
+<The source tensor.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.trace
+<! type function
+<! brief
+<Return a scalar which indicates the sum of the diagonal entries of a matrix.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.tv1d
+<! type function
+<! brief
+<One dimensional total variation.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression, should be a vector.
+<! arg w: ArrayLike = 1
+<The weights, can be broadcasted.
+<! arg p: int = 1
+<The norm level.
+<! return Union[Expr, Constant]
+<The result scalar.
+<
+<
+py.tv2d
+<! type function
+<! brief
+<Return total variation for matrix.
+<! arg x: Union[TensorLike, ArrayLike]
+<The expression, should be a matrix.
+<! arg p: int = 1
+<The norm level, supports 1 or 2.
+<! return Union[Expr, Constant]
+<The result scalar.
+py.vstack
+<! type function
+<! brief
+<Stack expressions in sequence vertically (row wise).
+<! arg *tensors: Union[TensorLike, ArrayLike]
+<The expressions to stack.
+<! return Union[Expr, Constant]
+<The result expression.
+<
+<
