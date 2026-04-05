@@ -255,10 +255,6 @@ We also gratefully acknowledge Prof. Kun Yuan and his group for their contributi
 - Yilong Song — acceleration
 - Hao Yuan — examples
 
-.. raw:: latex
-
-   \enlargethispage{6\baselineskip}
-
 .. rst-class:: landing-page-section-heading
 
 .. rubric:: Next Steps
