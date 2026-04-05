@@ -89,5 +89,5 @@ jobs:
         run: |
           cd docs
           python -c "import genrst; genrst.writeRst()"
-          sphinx-build -b dirhtml ./ _build/html
+          python -m sphinx -T -j auto -b dirhtml ./ _build/html
         continue-on-error: false
