@@ -624,6 +624,7 @@ class ASTProblemTestCase(unittest.TestCase):
     # s.t.  x <= 0,   z <= 1,   x + z = 1
     # Check detection of infeasibility (conflicting linear constraints).
     def test_infeasible_detect_conflict_linear_constraint(self):
+        # x <= 0, z <= 1, x + z == 1  →  feasible at x=0, z=1
         model = admm.Model()
         x = admm.Var("x")
         z = admm.Var("z")
@@ -634,7 +635,7 @@ class ASTProblemTestCase(unittest.TestCase):
         model.setOption(admm.Options.solver_verbosity_level, 3)
         model.optimize()
 
-        self.assertEqual(model.status, 2)
+        self.assertEqual(model.status, 1)  # feasible: x=0, z=1
 
     # min   0
     # s.t.  x1 + 2 x2 = 1,   2 x1 + 4 x2 = 4
