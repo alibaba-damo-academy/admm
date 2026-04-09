@@ -79,14 +79,47 @@ class L0Norm(admm.UDFBase):
         return [prox.tolist()]
 ```
 
+ADMM supports two UDF paths. Choose whichever fits your function:
+
+**Path 1: `eval` + `argmin`** — you supply the closed-form proximal operator. Best for nonsmooth or indicator functions (L0, rank, projections).
+
+**Path 2: `eval` + `grad`** — you supply the gradient. Best for smooth functions where the proximal operator has no simple formula (log-cosh, Cauchy loss, quantile regression). The C++ backend solves the proximal subproblem via gradient descent with backtracking line search.
+
+Example of a `grad`-based UDF:
+
+```python
+import admm
+import numpy as np
+
+class LogCoshLoss(admm.UDFBase):
+    """Log-cosh loss: f(x) = sum(log(cosh(x_i))).
+
+    Gradient: grad_i = tanh(x_i)
+    """
+
+    def __init__(self, arg):
+        self.arg = arg
+
+    def arguments(self):
+        return [self.arg]
+
+    def eval(self, arglist):
+        x = np.asarray(arglist[0], dtype=float)
+        return float(np.sum(np.log(np.cosh(x))))
+
+    def grad(self, arglist):
+        x = np.asarray(arglist[0], dtype=float)
+        return [np.tanh(x)]
+```
+
 When contributing a new UDF:
 
 1. Create a new file in `udf/`, such as `udf/MyPenalty.py`
 2. Define one class with the same name as the file, such as `class MyPenalty(admm.UDFBase)`
-3. Add a docstring with the function definition and proximal operator in plain-text math notation
-4. Implement `arguments()`, `eval()`, and `argmin()`
+3. Add a docstring with the function definition and proximal operator or gradient in plain-text math notation
+4. Implement `arguments()`, `eval()`, and **either** `argmin()` or `grad()`
 5. Keep dependencies local to the file so the class is easy to review and maintain
-6. Add or update tests in `tests/test_udf.py` to show how the new class is used
+6. Add or update tests in `tests/test_udf.py` (for `argmin`-based) or `tests/test_udf_grad.py` (for `grad`-based) to show how the new class is used
 
 After adding the file, it will be available through `import udf` as `udf.MyPenalty`.
 
@@ -146,8 +179,14 @@ pytest tests/test_ut.py
 # run all tests with user-defined proximal functions
 pytest tests/test_udf.py
 
+# run all tests with grad-based UDFs
+pytest tests/test_udf_grad.py
+
 # run all tests with common ADMM applications
 pytest tests/test_admm.py
+
+# run all documentation example tests
+pytest tests/test_doc.py
 ```
 
 ### Documentation

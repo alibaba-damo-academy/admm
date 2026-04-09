@@ -10,4 +10,5 @@ include src/admm/__init__.py
 recursive-include src/admm *.pyx *.pxi *.pxd *.h
 recursive-include udf *.py
 recursive-include tests *.py
-recursive-include docs *.py *.data
+recursive-include docs *.py *.data *.rst
+recursive-include docs/_static *

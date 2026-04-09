@@ -14,7 +14,7 @@ For convex models, ADMM targets the global optimum. Through user-defined proxima
 
 - **Model-first optimization workflow**: Write the mathematics directly and let ADMM handle canonicalization, decomposition, and solver orchestration automatically.
 - **Rich structured problem support**: Combine linear and quadratic objectives, smooth losses, nonsmooth regularizers, affine constraints, and matrix-valued structure such as symmetry and PSD constraints.
-- **Beyond standard convex modeling**: Extend the library with custom proximal operators through `UDFBase` to handle selected nonconvex penalties and constraints, including L0, rank, and manifold-style projections.
+- **Beyond standard convex modeling**: 48 ready-to-use UDF classes ship out of the box — from L0 sparsity and rank constraints to Cauchy, Welsch, and Tukey robust losses, KL divergence, logistic regression, and graph Laplacian smoothing. For any new smooth loss, supply just `eval` + `grad` and the C++ backend solves the proximal subproblem automatically.
 - **Built for real applications**: Use the same interface for portfolio optimization, sparse and regularized learning, covariance estimation, semidefinite modeling, compressed sensing, and signal or image processing.
 - **NumPy-friendly Python API**: Work naturally with scalars, vectors, and matrices in a concise Python interface instead of hand-coding low-level updates.
 - **Fast backend, practical deployment**: Run on a C++ backend with Python bindings across Linux, macOS, and Windows.
@@ -30,6 +30,7 @@ ADMM is a strong fit when your model combines several structured ingredients in 
 - structural constraints on variables such as nonnegativity, symmetry, or PSD
 - matrix-valued objectives such as trace, log-determinant, or Frobenius norm
 - custom proximal terms for advanced nonconvex modeling
+- custom smooth losses via gradient-based UDFs (Cauchy, log-cosh, quantile regression, etc.)
 
 ## Installation
 
@@ -83,7 +84,7 @@ print(f"obj:    {model.ObjVal:.6f}")
 
 ## Examples
 
-The [`examples/`](examples/) folder contains 34 standalone scripts covering every documented use case — from basic LP/QP to UDF-based nonconvex models. Each script runs independently:
+The [`examples/`](examples/) folder contains 40 standalone scripts covering every documented use case — from basic LP/QP to UDF-based nonconvex models and gradient-based smooth losses. Each script runs independently:
 
 ```bash
 python examples/portfolio_optimization.py
@@ -95,13 +96,23 @@ See [`examples/README.md`](examples/README.md) for the full list.
 
 ## User-Defined Proximal Functions
 
-The [`udf/`](udf/) folder ships 15 ready-to-use proximal operators for nonconvex and convex penalties (L0, rank, manifold projections, etc.) that go beyond standard convex modeling tools. Example usage:
+The [`udf/`](udf/) folder ships 48 ready-to-use UDF classes — 15 proximal operators for nonconvex and convex penalties (L0, rank, manifold projections, etc.) and 33 gradient-based smooth losses covering robust M-estimators (Cauchy, Welsch, Tukey, Geman-McClure, etc.), classification losses (logistic, hinge, cross-entropy), divergences (KL, Itakura-Saito, χ²), barriers (log barrier, negative entropy), and structural penalties (smooth TV, graph Laplacian) — that go beyond standard convex modeling tools.
+
+ADMM supports two UDF paths — supply the proximal operator (`argmin`) or just the gradient (`grad`):
 
 ```python
+# Path 1: argmin — closed-form proximal operator (nonconvex penalties, indicators)
 from udf.L0Norm import L0Norm
-
 model.setObjective(0.5 * admm.sum(admm.square(x - y)) + lam * L0Norm(x))
 ```
+
+```python
+# Path 2: grad — gradient only (smooth custom losses)
+from udf.CauchyLoss import CauchyLoss
+model.setObjective(CauchyLoss(A @ x - b, c=2.0))
+```
+
+The `grad` path lets you add any differentiable custom loss without deriving a proximal formula — the C++ backend handles the proximal solve via gradient descent with backtracking line search.
 
 See [`udf/README.md`](udf/README.md) for the full class list, how to write your own, and how to contribute.
 
@@ -138,11 +149,12 @@ pip install . -r requirements.txt
 ### Run Tests
 
 ```bash
-pytest tests/                # all tests
-pytest tests/test_ut.py      # unit tests
-pytest tests/test_admm.py    # application tests
-pytest tests/test_udf.py     # user-defined function tests
-pytest tests/test_doc.py     # documentation example tests
+pytest tests/                    # all tests
+pytest tests/test_ut.py          # unit tests
+pytest tests/test_admm.py        # application tests
+pytest tests/test_udf.py         # user-defined function tests (argmin path)
+pytest tests/test_udf_grad.py    # user-defined function tests (grad path)
+pytest tests/test_doc.py         # documentation example tests
 ```
 
 ### Build Documentation Locally

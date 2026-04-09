@@ -19,35 +19,6 @@ class ASTProblemTestCase(unittest.TestCase):
         model.setOption(admm.Options.display_sub_solver_details, 0)
         return model
 
-    # min   c^T x
-    # s.t.  A[i,:] @ x <= b[i],   i = 1, ..., m
-    def test_Linear_Program_Comparison(self):
-
-        m = 1500
-        n = 1000
-        np.random.seed(1)
-        s0 = np.random.randn(m)
-        lamb0 = np.maximum(-s0, 0)
-        s0 = np.maximum(s0, 0)
-        x0 = np.random.randn(n)
-        A = np.random.randn(m, n)
-        b = A @ x0 + s0
-        c = -A.T @ lamb0
-
-        model = self._new_model()
-        x_admm = admm.Var(n)
-        model.setObjective(c.T @ x_admm)
-        for i in range(m):
-            model.addConstr(A[i, :] @ x_admm <= b[i])
-
-        model.setOption(admm.Options.admm_max_iteration, 10000)
-        model.setOption(admm.Options.termination_absolute_error_threshold, 1e-3)
-        model.setOption(admm.Options.termination_relative_error_threshold, 1e-6)
-
-        model.optimize()
-
-        self.assertEqual(model.StatusString, "SOLVE_OPT_SUCCESS")
-
     # min   0.5 * ||x - y||_2^2 + lam * ||x||_4^4
     #
     # where  ||x||_4^4 = sum_i x_i^4

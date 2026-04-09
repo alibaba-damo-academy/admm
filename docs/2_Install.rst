@@ -71,7 +71,7 @@ Prerequisites:
 
 - Python >= 3.9
 - C++ compiler (GCC, Clang, or MSVC)
-- admmlib >= 2026.4.2 (admm C++ core dependency library)
+- admmlib >= 2026.4.4 (admm C++ core dependency library)
 
 Install steps:
 

@@ -752,7 +752,7 @@ py.Model.setObjective
 <! arg expr: Union[TensorLike, ArrayLike]
 <The objective function. Pass a `None` to clear objective function.
 <! arg modelsense: int=0
-<Optimization sense, MINIMIZE(1) or MAXIMIZE(-1).
+<Optimization sense, MINIMIZE(1) or MAXIMIZE(-1). Default 0 means keep the current sense (minimize if not previously set).
 <
 <
 py.Model.setOption
@@ -1184,7 +1184,7 @@ py.TuningContext
 py.UDFBase
 <! type class
 <! brief
-<The base class for user to define function.
+<The base class for user-defined functions. A subclass must implement arguments() and eval(), plus either argmin() (proximal operator path) or grad() (gradient path).
 <
 <
 py.UDFBase.argmin
@@ -1192,12 +1192,12 @@ py.UDFBase.argmin
 <! brief
 <Method to minimize function value.
 <
-<The implementation must solve: argmin_x f(x) + (lamb/2)||x - v||^2, where v is the current iterate passed via tensorlist.
+<The implementation must solve: argmin_x { lamb * f(x) + (1/2)||x - v||^2 }, where v is the current iterate passed via tensorlist.
 <
 <For indicator functions, the argmin reduces to projection onto the feasible set.
 <
 <! arg lamb: float
-<The penalty weight (rho) provided by the ADMM iteration. The argmin method must solve: argmin_x f(x) + (lamb/2)||x - v||^2.
+<The penalty weight (rho) provided by the ADMM iteration. The argmin method must solve: argmin_x { lamb * f(x) + (1/2)||x - v||^2 }.
 <
 <! arg tensorlist: list
 <List of `numpy.ndarray`, the current iterate values for each associated variable.
@@ -1226,6 +1226,23 @@ py.UDFBase.eval
 <List of `numpy.ndarray`. Each one is a value for corresponding variable associated.
 <! return float
 <The function value. For indicator functions, return 0.0 if feasible and float("inf") otherwise.
+<
+<
+py.UDFBase.grad
+<! type method
+<! sortname D
+<! brief
+<Compute the gradient of the function at the given point.
+<
+<This is an alternative to argmin: implement grad instead of argmin for smooth functions where the proximal operator has no convenient closed form. The C++ backend solves the proximal subproblem automatically using gradient descent with Armijo backtracking line search.
+<
+<A UDF must implement either argmin or grad, not both.
+<
+<! arg tensorlist: list
+<List of `numpy.ndarray`, the current point at which to evaluate the gradient. Each entry corresponds to the matching variable in arguments().
+<
+<! return list
+<A list of arrays (one per variable in arguments()), where each array has the same shape as the corresponding input and contains the partial derivatives of the function with respect to that variable.
 <
 <
 py.Var
@@ -1521,7 +1538,7 @@ py.logistic
 <! brief
 <Return a tensor, each element indicates the result of log(e ^ x + b).
 <! arg x: Union[TensorLike, ArrayLike]
-<The expression `x` which requires each element to be greater than 0.
+<The input expression `x`.
 <! arg b: ArrayLike = 1
 <The tensor parameter `b` in logistic function.
 <! return Union[Expr, Constant]
@@ -1599,9 +1616,9 @@ py.norm
 <! arg ord:Union[int, str]=None
 <The norm level:
 <  * None - level 2 norm for vector and Frobenius norm for matrix.
-<  * 1 - for level 1 norm. It is, sum(abs(x)) for vector, and for matrix, max level 1 norm for all its row vectors.
+<  * 1 - for level 1 norm. It is, sum(abs(x)) for vector, and for matrix, max column sum of absolute values.
 <  * 2 - for level 2 norm. It is, sqrt(sum(x^2)) for vector, and largest singular value for matrix.
-<  * inf - for inf norm. It is, max(abs(x)) for vector, and for matrix, max level 1 norm for all its column vectors.
+<  * inf - for inf norm. It is, max(abs(x)) for vector, and max row sum of absolute values for matrix.
 <  * 'fro' - for frobenius norm. It is, sqrt(sum(x^2)) for matrix.
 <  * 'nuc' - for nuclear norm. It is, sum for all singular values.
 <! return Union[Expr, Constant]

@@ -7,6 +7,7 @@ cdef extern from "admm.h":
     ctypedef void (*tuning_callback_t)(void* userdata, int* iactive, int* dactive, int* intval, double* dblval);
     ctypedef int (*value_eval_t)(void* userdata, int nvars, int* ndims, int* shapes, double* tensors, double* result);
     ctypedef int (*argmin_t)(void* userdata, double lamb, int nvars, int* ndims, int* shapes, double* tensors);
+    ctypedef int (*grad_t)(void* userdata, int nvars, int* ndims, int* shapes, double* tensors, double* grad_out);
     ctypedef void* model_t;
     ctypedef void* tensor_t;
     ctypedef void* problem_ctx_t;
@@ -18,7 +19,9 @@ cdef extern from "admm.h":
     int admm_error_code(const char* msg);
 
     int admm_custom_udf(const char* name, value_eval_t eval, argmin_t argmin, int* udf);
+    int admm_custom_udf_with_grad(const char* name, value_eval_t eval, grad_t grad, int* udf);
     int admm_get_udf(int udf, char** name, value_eval_t* eval, argmin_t* argmin);
+    int admm_get_udf_grad(int udf, grad_t* grad);
     int admm_is_udf_opr(int opr);
 
     int admm_shape_add(int ndim1, int* shape1, int ndim2, int* shape2, int* rdim, int* rshape);

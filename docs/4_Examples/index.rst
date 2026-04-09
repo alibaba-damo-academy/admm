@@ -70,6 +70,18 @@ Use the table below to find the example that best matches your formulation.
      - :ref:`The Binary Indicator <udf-example-binary>`
    * - sparse regression with L0 penalty and linear constraints (UDF + constraints)
      - :ref:`L0-Regularized Regression <udf-example-l0-regression>`
+   * - robust regression with a smooth bounded-gradient loss (gradient UDF)
+     - :ref:`Log-Cosh Robust Regression <udf-grad-example-log-cosh>`
+   * - heavy-tailed robustness with a redescending influence function (gradient UDF)
+     - :ref:`Cauchy Loss Robust Regression <udf-grad-example-cauchy>`
+   * - conditional quantile estimation with a smooth pinball loss (gradient UDF)
+     - :ref:`Smooth Quantile Regression <udf-grad-example-smooth-quantile>`
+   * - precision-focused regression with steeper small-error gradients (gradient UDF)
+     - :ref:`Wing Loss Regression <udf-grad-example-wing-loss>`
+   * - edge-preserving signal denoising with a differentiable TV penalty (gradient UDF)
+     - :ref:`Smooth Total Variation Denoising <udf-grad-example-smooth-tv>`
+   * - GLM for positive-valued data with a Gamma deviance (gradient UDF)
+     - :ref:`Gamma Regression <udf-grad-example-gamma-regression>`
 
 .. _examples-core-convex-forms:
 
@@ -266,5 +278,50 @@ modeling workflow.
    udf_simplex_indicator
    udf_binary_indicator
    udf_l0_regression
+
+.. _examples-udf-grad:
+
+.. rst-class:: landing-page-section-heading
+
+.. rubric:: Examples with User-Defined Smooth Functions
+
+These examples demonstrate the ``grad`` UDF path: instead of deriving a proximal operator, you
+supply only ``eval`` (function value) and ``grad`` (gradient), and the C++ backend solves the
+proximal subproblem automatically via gradient descent with Armijo backtracking line search.
+
+This path is ideal for **smooth custom losses** where the proximal operator has no convenient
+closed form — robust losses from statistics, domain-specific objectives from machine learning,
+GLM deviance functions, and structural penalties like total variation. Each example below is a
+complete, self-contained formulation that composes the custom loss with standard |ADMM| atoms
+and constraints.
+
+.. list-table:: Examples in this group
+   :widths: 45 55
+   :header-rows: 1
+
+   * - Example
+     - Main structure
+   * - :ref:`Log-Cosh Robust Regression <udf-grad-example-log-cosh>`
+     - smooth L1 approximation with bounded gradient :math:`\tanh(r)`
+   * - :ref:`Cauchy Loss Robust Regression <udf-grad-example-cauchy>`
+     - heavy-tailed loss with redescending influence function
+   * - :ref:`Smooth Quantile Regression <udf-grad-example-smooth-quantile>`
+     - differentiable pinball loss for conditional quantile estimation
+   * - :ref:`Wing Loss Regression <udf-grad-example-wing-loss>`
+     - precision-focused loss from face landmark localization
+   * - :ref:`Smooth Total Variation Denoising <udf-grad-example-smooth-tv>`
+     - differentiable TV penalty with structural (non-elementwise) gradient
+   * - :ref:`Gamma Regression <udf-grad-example-gamma-regression>`
+     - GLM with Gamma deviance and log link for positive responses
+
+.. toctree::
+   :maxdepth: 1
+
+   udf_grad_log_cosh
+   udf_grad_cauchy_loss
+   udf_grad_smooth_quantile
+   udf_grad_wing_loss
+   udf_grad_smooth_tv
+   udf_grad_gamma_regression
 
 For detailed symbol documentation, see the :doc:`../5_API_Document/index`.

@@ -51,7 +51,7 @@ Users should not need to introduce extra variables or write low-level update rul
    * - matrix-valued objectives
      - trace, log-determinant, Frobenius norm
    * - custom user-defined terms
-     - L0 norm, rank constraint, manifold projection
+     - L0 norm, rank constraint, manifold projection, gradient-based smooth losses
 
 Typical application areas include:
 
@@ -60,9 +60,15 @@ Typical application areas include:
 - **Matrix and covariance estimation** — robust PCA, sparse inverse covariance, semidefinite programs
 - **Signal and image processing** — deblurring, total-variation denoising, compressed sensing
 - **Structured nonconvex models** — exact sparsity (L0), low-rank constraints, manifold feasibility
+- **Custom smooth losses** — Cauchy, log-cosh, quantile regression, and other differentiable losses via gradient-based UDFs
 
 |ADMM| also supports *nonconvex* models through user-defined proximal extensions (see :py:class:`UDFBase`).
 In the nonconvex setting, the solver acts as a practical local method and may converge to a local optimum rather than a global one.
+
+User-defined extensions support two paths: supply the closed-form proximal operator via ``argmin``,
+or supply just the gradient via ``grad`` and let the C++ backend solve the proximal subproblem
+automatically. The ``grad`` path makes it easy to add smooth custom losses without deriving proximal
+formulas by hand.
 
 
 .. rst-class:: landing-page-section-heading

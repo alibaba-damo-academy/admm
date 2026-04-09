@@ -10,13 +10,13 @@ For example:
 .. code-block:: py
 
     >>> print(inrange(numpy.arange(9).reshape(3, 3), 3, 5))
-    [[ 0.  0.  0.]
-    [inf inf inf]
-    [ 0.  0.  0.]]
+    [[inf inf inf]
+    [ 0.  0.  0.]
+    [inf inf inf]]
     >>> print(inrange(Constant(range(9)).reshape(3, 3), 3, 5))
-    [[ 0.  0.  0.]
-    [inf inf inf]
-    [ 0.  0.  0.]]
+    [[inf inf inf]
+    [ 0.  0.  0.]
+    [inf inf inf]]
     >>> print(inrange(Var(3, 3), 3, 5))
     Expr((3, 3), inrange('Var', 'ndarray', 'ndarray'))
 

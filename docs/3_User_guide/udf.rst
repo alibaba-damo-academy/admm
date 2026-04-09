@@ -40,22 +40,51 @@ A UDF is a Python class derived from :py:class:`UDFBase`. It does not replace va
 the rest of the objective. Instead, it gives the solver the function value and the proximal step for one
 custom term.
 
-.. list-table:: Minimal UDF interface
-   :widths: 50 50
+|ADMM| supports two UDF interfaces. You implement **either** ``argmin`` or ``grad`` — not both:
+
+.. list-table:: UDF interface: two paths
+   :widths: 20 40 40
    :header-rows: 1
    :class: longtable
 
    * - Method
-     - Return
+     - ``eval`` + ``argmin`` path
+     - ``eval`` + ``grad`` path
    * - :py:meth:`UDFBase.arguments`
+     - associated variables or expressions
      - associated variables or expressions
    * - :py:meth:`UDFBase.eval`
      - scalar function value
+     - scalar function value
    * - :py:meth:`UDFBase.argmin`
-     - list of minimizing argument values, or ``None``
+     - list of proximal minimizers, or ``None``
+     - *(not needed)*
+   * - :py:meth:`UDFBase.grad`
+     - *(not needed)*
+     - list of gradient arrays
+
+The ``argmin`` path is the original interface: you supply the closed-form proximal operator.
+The ``grad`` path is the alternative: you supply the gradient and the C++ backend solves the
+proximal subproblem automatically via gradient descent with backtracking line search.
+
+.. list-table:: Choosing between ``argmin`` and ``grad``
+   :widths: 50 50
+   :header-rows: 1
+   :class: longtable
+
+   * - Use ``argmin`` when
+     - Use ``grad`` when
+   * - the proximal operator has a known closed form
+     - the function is smooth but has no simple proximal formula
+   * - you want maximum per-iteration efficiency
+     - you want to prototype quickly without deriving the proximal step
+   * - the function is nonsmooth (indicators, L0, rank)
+     - the function is differentiable (log-cosh, Cauchy loss, custom loss)
 
 The examples below show the kinds of terms that are natural UDF candidates: exact sparsity, rank,
 manifold indicators, and other building blocks that are easy to describe through a proximal operator.
+The ``grad`` path further opens UDFs to smooth functions from statistics, machine learning, and
+signal processing where closed-form proximal operators are unavailable.
 
 The UDF examples linked below are ordered from sparsity penalties to rank models to manifold or other
 structured indicators. The last column highlights whether each model is within the usual CVXPY DCP rules, so it is easy to see where |ADMM| plus UDFs extend the modeling range.
@@ -98,6 +127,24 @@ structured indicators. The last column highlights whether each model is within t
    * - :ref:`The Binary Indicator <udf-example-binary>`
      - model binary decisions
      - no
+   * - :ref:`Log-Cosh Loss <udf-grad-example-log-cosh>`
+     - smooth robust regression (L1-like)
+     - yes
+   * - :ref:`Cauchy Loss <udf-grad-example-cauchy>`
+     - heavy-tailed robust regression
+     - no
+   * - :ref:`Smooth Quantile Loss <udf-grad-example-smooth-quantile>`
+     - quantile regression with smooth loss
+     - yes
+   * - :ref:`Wing Loss <udf-grad-example-wing-loss>`
+     - facial landmark localization
+     - no
+   * - :ref:`Smooth Total Variation <udf-grad-example-smooth-tv>`
+     - differentiable TV regularization
+     - yes
+   * - :ref:`Gamma Regression <udf-grad-example-gamma-regression>`
+     - GLM deviance for positive responses
+     - yes
 
 Walkthrough: The ``L0`` Norm as a UDF
 -------------------------------------
@@ -234,6 +281,162 @@ So the hard-thresholding proximal step keeps the large entries and removes the s
    x^\star \approx [0,\; 2,\; 0,\; 2.2].
 
 Small entries are removed; large entries survive unchanged.
+
+Walkthrough: Log-Cosh Loss via ``grad``
+---------------------------------------
+
+Not every custom function has a convenient closed-form proximal operator. For smooth functions, you can
+supply the **gradient** instead and let |ADMM| solve the proximal subproblem automatically. This is the
+``grad`` path.
+
+The tutorial below shows the full pattern on the log-cosh loss, a smooth robust alternative to least squares.
+The full optimization problem is
+
+.. math::
+
+   \min_x \; \frac{1}{2}\|x - y\|_2^2 + \lambda \sum_i \log\!\bigl(\cosh(x_i)\bigr),
+
+where :math:`y` is the observed vector, :math:`\lambda > 0` controls the strength of the robust penalty,
+and :math:`\log(\cosh(\cdot))` behaves like :math:`\frac{1}{2}x^2` for small :math:`|x|` and like
+:math:`|x|` for large :math:`|x|` — similar to the Huber loss but everywhere differentiable. Deriving a
+closed-form proximal operator for this function is nontrivial, but the gradient is immediate. The role
+of the UDF is to supply :math:`f(x) = \sum_i \log(\cosh(x_i))` and its gradient.
+
+The first custom method is :py:meth:`UDFBase.eval`. It returns the scalar value of the function at a
+concrete numeric point. The mathematical definition is
+
+.. math::
+
+   f(x) = \sum_i \log\!\bigl(\cosh(x_i)\bigr).
+
+So ``eval`` sums the elementwise log-cosh values:
+
+.. code-block:: python
+
+    def eval(self, arglist):
+        x = np.asarray(arglist[0], dtype=float)
+        return float(np.sum(np.log(np.cosh(x))))
+
+The second custom method is :py:meth:`UDFBase.grad`. Instead of the proximal minimizer (``argmin``),
+it returns the **gradient** of the function. The gradient of log-cosh is:
+
+.. math::
+
+   \nabla f(x)_i = \tanh(x_i),
+
+which is bounded in :math:`[-1, 1]`. This is the key to robustness: large values of :math:`x_i`
+contribute a gradient of at most :math:`\pm 1`, limiting outlier influence. The implementation is
+a single line:
+
+.. code-block:: python
+
+    def grad(self, arglist):
+        x = np.asarray(arglist[0], dtype=float)
+        return [np.tanh(x)]
+
+Note that ``grad`` returns a **list of arrays** (one per argument), just as ``argmin`` does. Each array
+must have the same shape as the corresponding input.
+
+The remaining method, :py:meth:`UDFBase.arguments`, works exactly the same as in the ``argmin`` path.
+It tells |ADMM| which symbolic expression this UDF depends on:
+
+.. code-block:: python
+
+    def arguments(self):
+        return [self.arg]
+
+Because ``arguments()`` returns ``[self.arg]``, the first numeric argument passed into ``eval(arglist)``
+and ``grad(arglist)`` is the current value of that symbolic quantity, accessed as ``arglist[0]``.
+
+Behind the scenes, at each ADMM iteration the C++ backend uses the user-supplied ``eval`` and ``grad``
+to solve the proximal subproblem
+
+.. math::
+
+   \operatorname*{argmin}_x \; \lambda \sum_i \log(\cosh(x_i)) + \frac{1}{2}\|x - v\|_2^2
+
+via gradient descent with Armijo backtracking line search. The user **never** needs to derive the proximal
+formula — just supply :math:`f(x)` and :math:`\nabla f(x)`.
+
+Complete runnable example:
+
+.. code-block:: python
+
+    import numpy as np
+    import admm
+
+    class LogCoshLoss(admm.UDFBase):
+        def __init__(self, arg):
+            self.arg = arg
+
+        def arguments(self):
+            return [self.arg]
+
+        def eval(self, arglist):
+            x = np.asarray(arglist[0], dtype=float)
+            return float(np.sum(np.log(np.cosh(x))))
+
+        def grad(self, arglist):
+            x = np.asarray(arglist[0], dtype=float)
+            return [np.tanh(x)]
+
+    y = np.array([0.2, 5.0, -3.0, 0.1])
+    lam = 0.5
+
+    model = admm.Model()
+    x = admm.Var("x", len(y))
+    model.setObjective(0.5 * admm.sum(admm.square(x - y)) + lam * LogCoshLoss(x))
+    model.optimize()
+
+    print(" * x: ", np.asarray(x.X))
+    print(" * model.ObjVal: ", model.ObjVal)
+    print(" * model.StatusString: ", model.StatusString)  # Expected: SOLVE_OPT_SUCCESS
+
+Usage is identical to the ``argmin`` path — the solver detects which method is present and chooses the
+solve strategy accordingly.
+
+In this concrete example, :math:`\lambda = 0.5` and :math:`y = [0.2, 5.0, -3.0, 0.1]`. The optimal
+:math:`x` balances the data-fit term :math:`\frac{1}{2}\|x - y\|_2^2` (pulling :math:`x` toward
+:math:`y`) against the log-cosh penalty (pulling :math:`x` toward zero). Because log-cosh grows like
+:math:`|x|` for large values, the penalty is less harsh on large entries than an L2 penalty would be,
+but stronger than no penalty at all. The solver recovers a regularized estimate where large entries
+(:math:`y_2 = 5`, :math:`y_3 = -3`) are shrunk modestly and small entries (:math:`y_1 = 0.2`,
+:math:`y_4 = 0.1`) are shrunk more strongly.
+
+Multi-argument ``grad`` UDFs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Multi-argument UDFs work the same way with the ``grad`` path. For a function of two variables,
+``arguments`` returns two symbolic quantities, and ``grad`` returns a list of two gradient arrays —
+one per variable:
+
+.. code-block:: python
+
+    class CoupledQuad(admm.UDFBase):
+        """f(x, y) = sum((x - y)^2)"""
+        def __init__(self, x_arg, y_arg):
+            self.x_arg = x_arg
+            self.y_arg = y_arg
+
+        def arguments(self):
+            return [self.x_arg, self.y_arg]
+
+        def eval(self, arglist):
+            x = np.asarray(arglist[0], dtype=float)
+            y = np.asarray(arglist[1], dtype=float)
+            return float(np.sum((x - y) ** 2))
+
+        def grad(self, arglist):
+            x = np.asarray(arglist[0], dtype=float)
+            y = np.asarray(arglist[1], dtype=float)
+            return [2 * (x - y), -2 * (x - y)]
+
+Here ``grad`` returns ``[df/dx, df/dy]`` — each array has the same shape as the corresponding input
+variable.
+
+The ``grad`` path makes |ADMM| a natural fit for custom smooth losses from statistics and machine learning
+— quantile regression, Cauchy loss, wing loss, and other functions where the gradient is easy to write but the
+proximal operator is not.
 
 More UDF examples are collected in
 :ref:`Examples with User-Defined Proximal Functions <examples-udf>` in the :ref:`Examples chapter <doc-examples>`.

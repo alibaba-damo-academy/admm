@@ -16,7 +16,14 @@ def _load_udf_classes():
 
     import warnings
     for module_name in module_names:
-        module = import_module(f"{__name__}.{module_name}")
+        try:
+            module = import_module(f"{__name__}.{module_name}")
+        except Exception as exc:
+            warnings.warn(
+                f"UDF module '{module_name}' failed to import: {exc}",
+                stacklevel=2,
+            )
+            continue
         udf_class = getattr(module, module_name, None)
         if udf_class is None:
             warnings.warn(

@@ -76,6 +76,19 @@ python examples/lasso_regression.py
 | [`udf_binary.py`](udf_binary.py) | Binary indicator ({0,1} projection) |
 | [`udf_l0_regression.py`](udf_l0_regression.py) | L0-regularized nonnegative regression |
 
+### User-Defined Smooth Functions (grad UDF)
+
+These examples use the `grad` path: supply `eval` + `grad` instead of a proximal operator. The C++ backend solves the proximal subproblem automatically.
+
+| Example | Description |
+|---------|-------------|
+| [`udf_grad_log_cosh.py`](udf_grad_log_cosh.py) | Log-cosh robust regression (smooth L1) |
+| [`udf_grad_cauchy_loss.py`](udf_grad_cauchy_loss.py) | Cauchy loss robust regression (redescending) |
+| [`udf_grad_smooth_quantile.py`](udf_grad_smooth_quantile.py) | Smooth quantile regression (prediction intervals) |
+| [`udf_grad_wing_loss.py`](udf_grad_wing_loss.py) | Wing loss regression (precision-focused, from CV) |
+| [`udf_grad_smooth_tv.py`](udf_grad_smooth_tv.py) | Smooth total variation denoising (structural gradient) |
+| [`udf_grad_gamma_regression.py`](udf_grad_gamma_regression.py) | Gamma regression GLM (positive-valued responses) |
+
 ## Running All Examples
 
 ```bash
@@ -93,4 +106,5 @@ pip install admm
 1. Start with `minimal_model.py` and `least_squares.py`
 2. Try `portfolio_optimization.py` and `lasso_regression.py`
 3. Explore advanced applications (`robust_pca.py`, `semidefinite_program.py`)
-4. Study UDF examples for custom proximal operators
+4. Study UDF examples for custom proximal operators (`udf_l0_norm.py`)
+5. Try grad UDF examples for custom smooth losses (`udf_grad_log_cosh.py`)

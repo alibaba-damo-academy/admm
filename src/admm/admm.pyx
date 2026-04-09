@@ -131,6 +131,8 @@ cdef ensure_array_type(obj):
     arr = _np.array(obj)
     if arr.dtype == object:
         raise NotImplementedError
+    if not _np.issubdtype(arr.dtype, _np.number) and arr.dtype != _np.bool_:
+        raise TypeError("expected numeric input, got dtype {}".format(arr.dtype))
     return arr
 
 def _start_doc_server(port = 8080):
@@ -152,8 +154,8 @@ def _start_doc_server(port = 8080):
     
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    except:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    except OSError:
         pass
 
     sock.bind(('127.0.0.1', port))
@@ -223,6 +225,7 @@ def _start_doc_server(port = 8080):
     try:
         while True:
             client, _ = sock.accept()
+            client.settimeout(30)
             req = client.recv(1024)
 
             if not req.startswith(b"GET /"):
@@ -258,6 +261,11 @@ def _start_doc_server(port = 8080):
                 path = path[:ppos]
 
             fpath = os.path.join(ROOT, path[1:])
+
+            # Prevent symlink escape
+            if not os.path.realpath(fpath).startswith(os.path.realpath(ROOT)):
+                not_found(client, proto)
+                continue
 
             if not os.path.exists(fpath):
                 not_found(client, proto)
