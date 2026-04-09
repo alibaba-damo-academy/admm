@@ -193,7 +193,11 @@ cdef class Constant(TensorLike):
                 attr |= (1 << tensorattrnames[key])
 
         err = admm_tensor_has_attr(self.tensor_, attr, &res)
-        if err != 0: raise ADMMError(err)
+        if err != 0:
+            # C backend does not support attr queries on user-created tensors
+            # (only model-registered ones). User-created Constants have no
+            # declared attributes, so the correct answer is False.
+            return False
         return res != 0
 
     @constant
