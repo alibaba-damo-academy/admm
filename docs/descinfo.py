@@ -9,7 +9,7 @@ MAINTAINER = "MindOpt Team"
 MAINTAINER_EMAIL = "solver.damo@list.alibaba-inc.com"
 URL = "https://github.com/alibaba-damo-academy/admm"
 KEYWORDS = ["admm", "optimization", "convex", "cython", "python"]
-INSTALL_REQUIRES = ["numpy>=1.20.0", "scipy>=1.7.0", "admmlib>=2026.4.4"]
+INSTALL_REQUIRES = ["numpy>=1.20.0", "scipy>=1.7.0", "admmlib>=2026.4.9"]
 PROJECT_URLS = {
     "Homepage": URL,
     "Documentation": "https://admm.readthedocs.io",

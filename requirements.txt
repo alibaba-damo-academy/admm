@@ -21,4 +21,4 @@ sphinx-autodoc-typehints>=1.18
 sphinx-automodapi
 
 # Core c++ dependencies
-admmlib>=2026.4.4
+admmlib>=2026.4.9
