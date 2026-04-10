@@ -1,6 +1,10 @@
 name: Build and Publish
 
 on:
+  push:
+    branches:
+      - main
+  
   release:
     types: [published]
   
@@ -96,7 +100,7 @@ jobs:
     name: Publish to PyPI
     needs: [build-wheels, build-sdist]
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || github.event.inputs.upload_to_pypi == 'true'
+    if: github.event_name == 'release' || github.event_name == 'push' || github.event.inputs.upload_to_pypi == 'true'
     
     environment:
       name: pypi
