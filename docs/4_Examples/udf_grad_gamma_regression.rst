@@ -129,7 +129,7 @@ Complete runnable example:
     print(f" * Correlation: {np.corrcoef(np.exp(mu_val), np.exp(mu_true))[0,1]:.4f}")
 
 
-This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/master/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
+This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/main/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
 
 .. code-block:: bash
 

@@ -108,7 +108,7 @@ Complete runnable example:
     print(" * model.ObjVal: ", model.ObjVal)  # Expected: ≈ 0.405
 
 
-This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/master/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
+This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/main/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
 
 .. code-block:: bash
 

@@ -4407,20 +4407,11 @@ class ASTProblemTestCase(unittest.TestCase):
     #
     # where  tv1d is the 1D total-variation (L1 trend filtering) of the signal
     def test_L1_Trend_Filtering_SP500_Comparison(self):
-        try:
-            y = np.loadtxt(
-                open("CompareCvxpy/Advanced_Applications/data/snp500.txt", "rb"),
-                delimiter=",",
-                skiprows=1,
-            )
-        except FileNotFoundError:
-            print("S&P 500 data file not found, using synthetic data")
-            np.random.seed(42)
-            n = 300
-            y = (
-                np.cumsum(np.random.normal(0, 0.01, n))
-                + np.sin(np.linspace(0, 6 * np.pi, n)) * 0.1
-            )
+        data_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "data", "snp500.txt"
+        )
+        y = np.loadtxt(data_path)
 
         if y.size > 300:
             idx = np.linspace(0, y.size - 1, 300).astype(int)

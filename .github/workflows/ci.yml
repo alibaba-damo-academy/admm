@@ -44,6 +44,10 @@ jobs:
         run: |
           pytest tests/test_udf.py -v
 
+      - name: Run gradient-based UDF tests
+        run: |
+          pytest tests/test_udf_grad.py -v
+
       - name: Run ADMM application tests
         run: |
           pytest tests/test_admm.py -v

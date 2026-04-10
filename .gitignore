@@ -23,14 +23,12 @@ wheels/
 *.dll
 *.dylib
 src/admm/dynamic.pxi
-src/admm/mdcp.pyx
 
 # Virtual environments
 venv/
 ENV/
 env/
 .venv/
-.aitest/
 
 # ===================================
 # Cython & C/C++ Build Artifacts
@@ -38,20 +36,6 @@ env/
 *.c
 *.cpp
 *.cpython-*.so
-admm/*.c
-admm/*.cpp
-admm/*.pyx
-admm/*.pxi
-admm/*.h
-admm/lib/
-
-# Legacy build artifacts
-admm.c
-mdcp.c
-mdcp.pyx
-dynamic.pxi
-dynamic.data
-__init__.pyi
 *.pyi
 
 # ===================================
@@ -60,11 +44,6 @@ __init__.pyi
 docs/_build/
 docs/definition.hrst
 docs/5_API_Document/
-
-# New structure (open-source)
-docs/doc/
-docs/rst/
-docs/html/
 
 # ===================================
 # IDE & Editor
@@ -84,19 +63,10 @@ htmlcov/
 .tox/
 
 # ===================================
-# Build System
-# ===================================
-cmake-build-*/
-
-# ===================================
 # Misc
 # ===================================
 .DS_Store
 *.log
-third_libs/
-libinfo_lock.ini
 *.tmp
-tests/test_python_tmp.py
-buildLocal.sh
 debug_*.dot
 debug_*.png

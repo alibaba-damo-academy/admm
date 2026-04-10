@@ -142,7 +142,7 @@ Complete runnable example:
     # Expected: tau=0.1 and tau=0.9 bracket the median, showing the prediction interval
 
 
-This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/master/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
+This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/main/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
 
 .. code-block:: bash
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # ADMM documentation build configuration file, created by
-# sphinx-quickstart on Sat Jul 11 14:57:57 2015.
+# ADMM documentation build configuration.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.

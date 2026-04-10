@@ -126,7 +126,7 @@ After adding the file, it will be available through `import udf` as `udf.MyPenal
 ### Pull Requests
 
 1. Fork the repository
-2. Create a new branch from `master` for your feature (`git checkout -b feature/amazing-feature`)
+2. Create a new branch from `main` for your feature (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Add or update tests as needed
 5. Update documentation as needed

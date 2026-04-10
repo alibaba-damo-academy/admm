@@ -11,5 +11,5 @@ build:
       for pyver in pyvers:
         ver = "py3{}".format(pyver)
         run_command_with_conda(ver, ["pip", "uninstall", "admm", "-y"])
-        run_command_with_conda(ver, ["pip", "install", "-r", "requirements.txt", "-i", "https://mirrors.aliyun.com/pypi/simple"])
+        run_command_with_conda(ver, ["pip", "install", "-r", "requirements.txt"])
         run_command_with_conda(ver, ["python", "-m", "build", "-n", "-w"])

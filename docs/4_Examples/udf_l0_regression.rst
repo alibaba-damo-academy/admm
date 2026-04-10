@@ -114,7 +114,7 @@ Complete runnable example:
     print(" * nnz(x): ", np.count_nonzero(np.abs(np.asarray(x.X)) > 1e-6))  # Expected: 3
 
 
-This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/master/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
+This example is available as a standalone script in the `examples/ <https://github.com/alibaba-damo-academy/admm/tree/main/examples>`_ folder of the `ADMM repository <https://github.com/alibaba-damo-academy/admm>`_:
 
 .. code-block:: bash
 

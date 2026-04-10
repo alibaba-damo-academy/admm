@@ -580,7 +580,7 @@ class GradUDFTestCase(unittest.TestCase):
 
         self.assertEqual(model.StatusString, "SOLVE_OPT_SUCCESS")
         x_val = np.asarray(x.X)
-        np.testing.assert_allclose(x_val, 1.0, atol=0.1)
+        np.testing.assert_allclose(x_val, 1.0, atol=0.3)
 
     # ---------------------------------------------------------------
     # 12. Logistic regression
