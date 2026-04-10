@@ -1,6 +1,29 @@
+def get_git_version():
+    import subprocess
+    import os
+
+    try:
+        file_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(file_dir)
+        
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cd", "--date=format:%y%m%d%H%M"],
+            cwd=project_root,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        date_str = result.stdout.strip()
+        if date_str:
+            return f"1.0.{date_str}"
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+        raise RuntimeError("generate version number failed")
+
+
 PACKAGE_NAME = "admm"
-PACKAGE_VERSION = "1.0.0"
 LIBNAME = "admm"
+PACKAGE_VERSION = get_git_version()
 DESCRIPTION = "ADMM - Automatic Decomposition Method by MindOpt"
 LICENSE = "MIT"
 AUTHOR = "MindOpt Team"
