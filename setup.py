@@ -108,8 +108,8 @@ setup(
     python_requires=">=3.9",
     install_requires=INSTALL_REQUIRES,
     project_urls=PROJECT_URLS,
-    packages=[PACKAGE_NAME, "udf"],
-    package_dir={PACKAGE_NAME: "src/admm", "udf": "udf"},
+    packages=[PACKAGE_NAME],
+    package_dir={PACKAGE_NAME: "src/admm"},
     package_data={
         PACKAGE_NAME: ["*.so", "*.dylib", "*.dll", "*.pyi"]
     },

@@ -37,6 +37,8 @@ env/
 *.cpp
 *.cpython-*.so
 *.pyi
+docs/dynamic.data
+src/admm/mdcp.pyx
 
 # ===================================
 # Documentation
