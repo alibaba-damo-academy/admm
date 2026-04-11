@@ -144,8 +144,7 @@ See [`udf/README.md`](udf/README.md) for the full class list, how to write your 
 ### Build and Install
 
 ```bash
-pip install -r requirements.txt
-pip install . --no-build-isolation
+pip install . -r requirements.txt
 ```
 
 ### Run Tests

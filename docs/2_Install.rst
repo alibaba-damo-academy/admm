@@ -79,7 +79,6 @@ Install steps:
 
    git clone https://github.com/alibaba-damo-academy/admm.git
    cd admm
-
    pip install . -r requirements.txt
 
 Isolated Python Environment
