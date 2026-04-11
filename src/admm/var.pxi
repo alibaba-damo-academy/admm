@@ -127,8 +127,8 @@ cdef class Var(TensorLike):
 
     def __repr__(self):
         name = self.name
-        return "Var({}, {})".format("unamed" if name is None else name, self.shape)
+        return "Var({}, {})".format("unnamed" if name is None else name, self.shape)
 
     def __str__(self):
         name = self.name
-        return "Var({}, {})".format("unamed" if name is None else name, self.shape)
+        return "Var({}, {})".format("unnamed" if name is None else name, self.shape)
