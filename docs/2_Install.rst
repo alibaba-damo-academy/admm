@@ -91,7 +91,7 @@ If you use ``conda``, create and activate an environment first, then install the
 .. code-block:: bash
 
    conda create --name admm-py310 python=3.10
-   conda activate admm-py39
+   conda activate admm-py310
    pip install admm
 
 On macOS, make sure the Python environment matches the machine architecture. When using ``conda``, it is
