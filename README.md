@@ -144,7 +144,8 @@ See [`udf/README.md`](udf/README.md) for the full class list, how to write your 
 ### Build and Install
 
 ```bash
-pip install . -r requirements.txt
+pip install -r requirements-dev.txt
+pip install . --no-build-isolation
 ```
 
 ### Run Tests
@@ -190,6 +191,26 @@ If you use ADMM in your research or work, please cite:
   note   = {Open-source Python library for structured optimization}
 }
 ```
+
+## Troubleshooting
+
+### `ImportError` after installing `admm`
+
+If `import admm` fails after a successful `pip install admm`, the most likely cause is that `admmlib` was not installed correctly. `admmlib` ships the native C library that `admm` depends on at runtime, and is normally installed automatically as a dependency.
+
+To check whether `admmlib` is installed:
+
+```bash
+pip show admmlib
+```
+
+If it is missing, reinstall it explicitly:
+
+```bash
+pip install --force-reinstall admmlib
+```
+
+If the problem persists, please open an issue with the output of `pip install admm -v` and your platform information.
 
 ## License
 

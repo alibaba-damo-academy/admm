@@ -145,7 +145,7 @@ After adding the file, it will be available through `import udf` as `udf.MyPenal
 - Cython >= 0.29.0
 - NumPy >= 1.20.0
 - SciPy >= 1.7.0
-- admmlib >= 2026.4.9 (pre-built C++ core dependency)
+- admmlib >= 2026.4.9 (pre-built C++ backend)
 
 ### Setup Development Environment
 
@@ -159,7 +159,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install development dependencies
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 # Build the package (uses current environment)
 python -m build -n
