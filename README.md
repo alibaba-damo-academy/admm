@@ -144,7 +144,7 @@ See [`udf/README.md`](udf/README.md) for the full class list, how to write your 
 ### Build and Install
 
 ```bash
-pip install -r requirements-dev.txt
+pip install -r requirements.txt
 pip install . --no-build-isolation
 ```
 
@@ -169,6 +169,7 @@ bash build.sh
 Open `docs/_build/html/index.html` in your browser. To build HTML only (without LaTeX/PDF):
 
 ```bash
+pip install -r docs/requirements.txt
 cd docs
 python -c "import genrst; genrst.writeRst()"
 python -m sphinx -b dirhtml ./ ./_build/html

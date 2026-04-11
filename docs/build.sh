@@ -4,6 +4,9 @@ set -e
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 cd "$SCRIPT_DIR" || exit 1
 
+# Install documentation dependencies
+pip install -r requirements.txt
+
 # Generate RST files from Python modules
 python -c "import genrst; genrst.writeRst()"
 

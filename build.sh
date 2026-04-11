@@ -8,7 +8,8 @@ echo "=== Building ADMM Python Package ==="
 echo ""
 
 echo "=== Step 1: Building package ==="
-pip install . -r requirements.txt
+pip install -r requirements.txt
+pip install . --no-build-isolation
 echo "Package built and installed successfully"
 echo ""
 

@@ -1,1 +1,9 @@
--r requirements-dev.txt
+cython>=0.29.0
+setuptools>=61
+numpy>=1.20.0
+stubgen-pyx
+wheel
+admmlib>=2026.4.9
+scipy>=1.7.0
+pytest>=7.0
+pytest-cov>=3.0

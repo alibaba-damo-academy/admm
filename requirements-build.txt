@@ -1,6 +1,0 @@
-cython>=0.29.0
-setuptools>=61
-numpy>=1.20.0
-stubgen-pyx
-wheel
-admmlib>=2026.4.9
