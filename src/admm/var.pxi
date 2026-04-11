@@ -97,6 +97,9 @@ cdef class Var(TensorLike):
     @constant
     def X(self):
         '''@APIDOC(py.Var.X)'''
+        if self.model_ is None:
+            raise ADMMError("Variable is not associated with any model. "
+                            "Add it to a model via setObjective/addConstr, then call optimize() first.")
         shape = self.shape
         sol = _np.empty(shape, dtype=_np.float64)
         err = admm_get_var_solution(self.model_.mdl_, self.id_, numpy_double_buffer(sol))
