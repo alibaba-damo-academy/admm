@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/admm.svg)](https://badge.fury.io/py/admm)
 [![Documentation Status](https://readthedocs.org/projects/admm/badge/?version=latest)](https://admm.readthedocs.io/en/latest/?badge=latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build and Publish](https://github.com/alibaba-damo-academy/admm/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/alibaba-damo-academy/admm/actions/workflows/build-and-publish.yml)
 
 ADMM (Automatic Decomposition Method by MindOpt) is a Python library for building and solving structured optimization models. You describe objectives and constraints in a natural mathematical style, and ADMM turns that model into an efficient numerical solve through automatic canonicalization, decomposition, and a high-performance C++ backend.
 
