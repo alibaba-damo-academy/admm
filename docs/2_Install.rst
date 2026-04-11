@@ -37,7 +37,7 @@ The tables below summarize the supported operating systems and Python versions f
    =========  ==========================================================================
    Language   Requirements
    =========  ==========================================================================
-   Python     Python 3.9 or higher
+   Python     Python 3.10 or higher
    =========  ==========================================================================
 
 The examples in this documentation assume a standard scientific Python environment with ``numpy`` available.
@@ -69,7 +69,7 @@ Install from Source
 
 Prerequisites:
 
-- Python >= 3.9
+- Python >= 3.10
 - C++ compiler (GCC, Clang, or MSVC)
 - admmlib >= 2026.4.9 (admm C++ core dependency library)
 
@@ -90,7 +90,7 @@ If you use ``conda``, create and activate an environment first, then install the
 
 .. code-block:: bash
 
-   conda create --name admm-py39 python=3.9
+   conda create --name admm-py310 python=3.10
    conda activate admm-py39
    pip install admm
 

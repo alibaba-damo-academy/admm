@@ -141,7 +141,7 @@ After adding the file, it will be available through `import udf` as `udf.MyPenal
 
 - Git
 - C++ compiler
-- Python >= 3.9
+- Python >= 3.10
 - Cython >= 0.29.0
 - NumPy >= 1.20.0
 - SciPy >= 1.7.0

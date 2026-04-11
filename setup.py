@@ -105,7 +105,7 @@ setup(
     url=URL,
     classifiers=CLASSIFIERS,
     keywords=KEYWORDS,
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=INSTALL_REQUIRES,
     project_urls=PROJECT_URLS,
     packages=[PACKAGE_NAME],

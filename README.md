@@ -128,7 +128,7 @@ See [`udf/README.md`](udf/README.md) for the full class list, how to write your 
 
 ### Prerequisites
 
-- Python >= 3.9
+- Python >= 3.10
 - C++ compiler (GCC, Clang, or MSVC)
 - Cython >= 0.29.0, setuptools >= 61, NumPy >= 1.20.0, SciPy >= 1.7.0
 - admmlib >= 2026.4.9 (pre-built C++ core dependency)
